@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang='en'>
+    <head>
+        <!--some meta tags-->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+        <title>A Neural Network Visualization</title>
+
+        <link rel="stylesheet" href="./lib/bootstrap/css/bootstrap.min.css">
+        <link rel="stylesheet" href="./style/theme.min.css">
+        <link rel="stylesheet" href="./lib/jquery/jquery-ui.min.css">
+        <link rel="stylesheet" href="./lib/fonts/fonts.css">
+        <link rel="stylesheet" href="./style/style.css">
+
+
+        <style type="text/css">
+canvas { 
+    border: 1px solid #555;
+    margin-top: 10px;
+}
+        #wrap {
+            width: 800px;
+            margin-right: auto;
+            margin-left: auto;
+            margin-bottom: 200px;
+        }
+        #gallery img {
+            width: 195;
+            height: 195px;
+            display: inline-block;
+        }
+
+        </style>
+    </head>
+    <body>
+        <nav class="navbar navbar-inverse navbar-fixed-top">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="#">A Neural Network Visualization</a>
+                </div>
+
+
+                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-2">
+                    <ul class="nav navbar-nav navbar-right">
+                        <li >
+                            <div class="btn-group ">
+                                <button id="btn-pause" class="btn btn-default navbar-btn" onclick="toggle_pause();" role="button" >
+                                    <span id="btn-pause-icon" class="glyphicon glyphicon-play" aria-hidden="true"></span>
+                                    Play/Pause
+                                </button>
+                            <button class="btn btn-warning navbar-btn" onclick="reload();" role="button" >
+                                <span class="glyphicon glyphicon-repeat" aria-hidden="true"></span>
+                                Reload Network
+                            </button>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <div class="container">
+
+
+
+            <div class="panel-group">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title pull-left lead">
+                            Network Settings
+                        </h3>
+                        <button class="btn btn-info pull-right btn-sm" data-toggle="collapse" data-target="#collapse1">
+                            show/hide
+                        </button>
+                        <div class="clearfix"></div>
+
+                    </div>
+                    <div id="collapse1" class="panel-collapse collapse">
+                        <div class="panel-body">
+                            <textarea id="layerdef" style="width:100%; height:250px;"></textarea>
+                        </div>
+                        <div class="panel-footer">
+                            <button class="btn btn-warning" onclick="reload();" role="button" >Submit!</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div >
+                <div class="col-md-5">
+                    <div class="panel panel-primary" >
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Original Image</h3>
+                        </div>
+                <div class="panel-body">
+                    <canvas id="canv_original"></canvas>
+                </div>
+                <div class="panel-footer">
+                    Choose your own image: 
+                    <input id="f" type="file" />
+                </div>
+                    </div>
+                </div>
+                <div class="col-md-7 ">
+                    <div class="panel panel-default ">
+                        <div class="panel-body">
+                            <p>
+                            This demo that treats the pixels of an image 
+                            as a learning problem: it takes the (x,y) position
+                            on a grid and learns to predict the color at that
+                            point using regression to (r,g,b). It's a bit like 
+                            compression, since the image information is encoded 
+                            in the weights of the network, but almost certainly
+                            not of practical kind :)
+                            </p>
+                            <p>
+                            The original web app is written by 
+                            <a href="https://twitter.com/karpathy">@karpathy</a>
+                            . I just modified/rewritten some of his code and tweak the UI.
+                            Note that the entire ConvNetJS definition is shown in textbox 
+                            up there and you can modified it if you want to :)
+                            </p>
+                        </div>
+                        <div class="panel-footer"><div id="lr">Learning rate:</div>
+                            <div id="slider"></div>
+                        </div>
+                        <div class="panel-footer">
+                            <span class="label label-primary">Info</span>
+                            <div class="alert alert-info" role="alert">
+                                <p id="report"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+            <br>
+            <br>
+            <div class="panel-group">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h3 class="panel-title pull-left lead">
+                            Network Details
+                        </h3>
+                        <button class="btn btn-info pull-right btn-sm" data-toggle="collapse" data-target="#collapse2">
+                            Click for more details
+                        </button>
+                        <div class="clearfix"></div>
+
+                    </div>
+                    <div id="collapse2" class="panel-collapse collapse">
+                        <div class="panel-body">
+                            <div id="visnet"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-5 pull-right">
+                <div class="panel panel-primary pull-left">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Neural Network output</h3>
+                    </div>
+                    <div class="panel-body">
+                        <canvas id="canv_net"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br>
+        
+        <footer class="footer">
+            <div class="copyright">
+                <div class="container">
+                    <div class="text-muted">
+                        <p class="pull-left">Written, coded by ic0n &amp; Cling.</p>
+                        <p class="pull-right">Jan, 2017</p>
+                    </div>
+                </div>
+            </div>
+        </footer>
+        <script src="./lib/jquery/jquery-3.1.1.min.js"></script>
+        <script src="./lib/jquery/jquery-ui.min.js"></script>
+        <script src="./lib/bootstrap/js/bootstrap.min.js"></script>
+        <script src="./lib/convnetjs/convnet.js"></script>
+        <script src='./lib/convnetjs/util.js'></script>
+        <script src='./lib/convnetjs/vis.js'></script>
+
+        <script src="./script/image_regression.js"></script>
+
+    </body>
+</html>
+

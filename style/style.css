@@ -1,0 +1,12 @@
+body {
+    padding-top: 80px;
+    font-family: 'Noto Sans SC';
+    font-style: normal;
+    font-weight: 300;
+}
+
+.pull-bottom {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+}
